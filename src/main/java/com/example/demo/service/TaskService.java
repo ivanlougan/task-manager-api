@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.dto.TaskResponse;
+import com.example.demo.exception.TaskNotFoundException;
 import com.example.demo.mapper.TaskMapper;
 import com.example.demo.model.Task;
 import com.example.demo.repository.TaskRepository;
@@ -12,10 +13,10 @@ import java.util.List;
 @Service
 public class TaskService implements TaskServiceInterface{
 
-    private final TaskRepository repo;
+    private final TaskRepository taskRepository;
 
     public TaskService(TaskRepository repo) {
-        this.repo = repo;
+        this.taskRepository = repo;
     }
 
     @Override
@@ -23,7 +24,7 @@ public class TaskService implements TaskServiceInterface{
 
         Task task = TaskMapper.toEntity(request);
 
-        Task savedTask = repo.save(task);
+        Task savedTask = taskRepository.save(task);
 
         return TaskMapper.toResponse(savedTask);
     }
@@ -31,10 +32,35 @@ public class TaskService implements TaskServiceInterface{
     @Override
     public List<TaskResponse> getAllTasks() {
 
-        return repo.findAll()
+        return taskRepository.findAll()
                 .stream()
                 .map(TaskMapper::toResponse)
                 .toList();
     }
+
+    @Override
+    public TaskResponse getTaskById(Long id) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() ->
+                        new TaskNotFoundException(
+                                "Task not found with id: " + id
+                        ));
+
+        return TaskMapper.toResponse(task);
+    }
+
+    @Override
+    public void deleteTaskById(Long id) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() ->
+                        new TaskNotFoundException(
+                                "Task not found with id: " + id
+                        ));
+
+        taskRepository.delete(task);
+    }
+
 
 }

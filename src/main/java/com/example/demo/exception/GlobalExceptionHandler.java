@@ -29,4 +29,15 @@ public class GlobalExceptionHandler {
 
         return errors;
     }
+
+    @ExceptionHandler(TaskNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleTaskNotFoundException(TaskNotFoundException ex) {
+
+        Map<String, String> error = new HashMap<>();
+
+        error.put("error", ex.getMessage());
+
+        return error;
+    }
 }

@@ -10,4 +10,8 @@ public interface TaskServiceInterface {
     TaskResponse createTask(CreateTaskRequest request);
 
     List<TaskResponse> getAllTasks();
+
+    TaskResponse getTaskById(Long id);
+
+    void deleteTaskById(Long id);
 }
