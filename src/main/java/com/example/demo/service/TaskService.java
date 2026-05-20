@@ -62,5 +62,21 @@ public class TaskService implements TaskServiceInterface{
         taskRepository.delete(task);
     }
 
+    @Override
+    public TaskResponse completeTask(Long id) {
 
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() ->
+                        new TaskNotFoundException(
+                                "Task not found with id: " + id
+                ));
+
+        task.setCompleted(true);
+
+        Task updatedTask = taskRepository.save(task);
+
+        return TaskMapper.toResponse(updatedTask);
+
+
+    }
 }

@@ -14,4 +14,6 @@ public interface TaskServiceInterface {
     TaskResponse getTaskById(Long id);
 
     void deleteTaskById(Long id);
+
+    TaskResponse completeTask(Long id);
 }
