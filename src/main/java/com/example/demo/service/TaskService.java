@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.dto.TaskResponse;
+import com.example.demo.dto.UpdateTaskRequest;
 import com.example.demo.exception.TaskNotFoundException;
 import com.example.demo.mapper.TaskMapper;
 import com.example.demo.model.Task;
@@ -60,6 +61,23 @@ public class TaskService implements TaskServiceInterface{
                         ));
 
         taskRepository.delete(task);
+    }
+
+    @Override
+    public TaskResponse updateTask(Long id, UpdateTaskRequest request) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() ->
+                        new TaskNotFoundException(
+                                "Task not found with id: " + id
+                        ));
+
+        task.setTitle(request.getTitle());
+        task.setCompleted(request.isCompleted());
+
+        Task updatedTask = taskRepository.save(task);
+
+        return TaskMapper.toResponse(updatedTask);
     }
 
     @Override

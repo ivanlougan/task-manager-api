@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.dto.TaskResponse;
+import com.example.demo.dto.UpdateTaskRequest;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface TaskServiceInterface {
     void deleteTaskById(Long id);
 
     TaskResponse completeTask(Long id);
+
+    TaskResponse updateTask(Long id, UpdateTaskRequest request);
 }

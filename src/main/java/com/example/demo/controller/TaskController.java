@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.dto.TaskResponse;
+import com.example.demo.dto.UpdateTaskRequest;
 import com.example.demo.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,14 @@ public class TaskController {
         taskService.deleteTaskById(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponse> updateTask(
+            @PathVariable Long id,
+            @RequestBody UpdateTaskRequest request) {
+
+        return ResponseEntity.ok(taskService.updateTask(id, request));
     }
 
     @PatchMapping("/{id}/complete")
