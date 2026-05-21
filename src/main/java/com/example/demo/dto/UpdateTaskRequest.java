@@ -11,6 +11,9 @@ public class UpdateTaskRequest {
 
     private boolean completed;
 
+    public UpdateTaskRequest() {
+    }
+
     public UpdateTaskRequest(String title, boolean completed) {
         this.title = title;
         this.completed = completed;
