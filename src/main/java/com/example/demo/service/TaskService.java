@@ -72,8 +72,8 @@ public class TaskService implements TaskServiceInterface{
                                 "Task not found with id: " + id
                         ));
 
-        task.setTitle(request.getTitle());
-        task.setCompleted(request.isCompleted());
+        task.setTitle(request.title());
+        task.setCompleted(request.completed());
 
         Task updatedTask = taskRepository.save(task);
 

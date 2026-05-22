@@ -3,13 +3,11 @@ package com.example.demo.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class CreateTaskRequest {
+public record CreateTaskRequest(
 
-    @NotBlank(message = "Title is required")
-    @Size(max = 100, message = "Title must be under 100 characters")
-    private String title;
+        @NotBlank(message = "Title is required")
+        @Size(max = 100, message = "Title cannot exceed 100 characters")
+        String title
 
-    public String getTitle() {
-        return title;
-    }
+) {
 }
