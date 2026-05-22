@@ -51,6 +51,27 @@ public class TaskServiceTest {
     }
 
     @Test
+    void shouldReturnTaskById() {
+
+        Task task = new Task(
+                "Tests are great, I love tests",
+                false
+        );
+
+        task.setId(1L);
+
+        when(taskRepository.findById(1L))
+                .thenReturn(Optional.of(task));
+
+        TaskResponse response = taskService.getTaskById(1L);
+
+        assertEquals(1L, response.id());
+        assertEquals("Tests are great, I love tests", response.title());
+
+        verify(taskRepository).findById(1L);
+    }
+
+    @Test
     void shouldUpdateTask() {
 
         Task task = new Task(
