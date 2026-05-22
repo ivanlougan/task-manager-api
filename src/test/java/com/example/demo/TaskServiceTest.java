@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.dto.TaskResponse;
 import com.example.demo.dto.UpdateTaskRequest;
+import com.example.demo.exception.TaskNotFoundException;
 import com.example.demo.model.Task;
 import com.example.demo.repository.TaskRepository;
 import com.example.demo.service.TaskService;
@@ -69,6 +70,38 @@ public class TaskServiceTest {
         assertEquals("Tests are great, I love tests", response.title());
 
         verify(taskRepository).findById(1L);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTaskNotFound() {
+
+        when(taskRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                TaskNotFoundException.class,
+                () -> taskService.getTaskById(1L)
+        );
+
+        verify(taskRepository).findById(1L);
+    }
+
+    @Test
+    void shouldDeleteTask() {
+
+        Task task = new Task(
+                "Delete me",
+                false
+        );
+
+        task.setId(1L);
+
+        when(taskRepository.findById(1L))
+                .thenReturn(Optional.of(task));
+
+        taskService.deleteTaskById(1L);
+
+        verify(taskRepository).delete(task);
     }
 
     @Test
