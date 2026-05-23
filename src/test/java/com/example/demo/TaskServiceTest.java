@@ -87,6 +87,29 @@ public class TaskServiceTest {
     }
 
     @Test
+    void shouldThrowExceptionWhenUpdatingMissingTask() {
+
+        UpdateTaskRequest request =
+                new UpdateTaskRequest(
+                        "New title",
+                        true
+                );
+
+        when(taskRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                TaskNotFoundException.class,
+                () -> taskService.updateTask(1L, request)
+        );
+
+        verify(taskRepository).findById(1L);
+
+        verify(taskRepository, never())
+                .save(any(Task.class));
+    }
+
+    @Test
     void shouldDeleteTask() {
 
         Task task = new Task(
