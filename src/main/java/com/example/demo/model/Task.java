@@ -7,12 +7,15 @@ public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
 
     private String title;
 
     private boolean completed;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Task() {
     }
@@ -34,6 +37,10 @@ public class Task {
         return title;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -44,5 +51,9 @@ public class Task {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
