@@ -5,6 +5,7 @@ import com.example.demo.dto.TaskResponse;
 import com.example.demo.dto.UpdateTaskRequest;
 import com.example.demo.exception.TaskNotFoundException;
 import com.example.demo.model.Task;
+import com.example.demo.model.User;
 import com.example.demo.repository.TaskRepository;
 import com.example.demo.service.TaskService;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,11 @@ public class TaskServiceTest {
     void shouldCreateTask() {
         CreateTaskRequest request = new CreateTaskRequest("Learn Python cause AI..");
 
+
+        User user = new User();
+        user.setId(1L);
+        user.setEmail("test@test.com");
+
         Task task = new Task(
                 "Learn Python cause AI..",
                 false
@@ -42,7 +48,7 @@ public class TaskServiceTest {
         when(taskRepository.save(any(Task.class)))
                 .thenReturn(task);
 
-        TaskResponse response = taskService.createTask(request);
+        TaskResponse response = taskService.createTask(request, user);
 
         assertEquals(1L, response.id());
         assertEquals("Learn Python cause AI..", response.title());

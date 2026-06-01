@@ -6,6 +6,7 @@ import com.example.demo.dto.UpdateTaskRequest;
 import com.example.demo.exception.TaskNotFoundException;
 import com.example.demo.mapper.TaskMapper;
 import com.example.demo.model.Task;
+import com.example.demo.model.User;
 import com.example.demo.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,14 @@ public class TaskService implements TaskServiceInterface{
     }
 
     @Override
-    public TaskResponse createTask(CreateTaskRequest request) {
+    public TaskResponse createTask(CreateTaskRequest request, User user) {
 
-        Task task = TaskMapper.toEntity(request);
+        Task task = new Task(
+                request.title(),
+                false
+        );
+
+        task.setUser(user);
 
         Task savedTask = taskRepository.save(task);
 
@@ -96,5 +102,13 @@ public class TaskService implements TaskServiceInterface{
         return TaskMapper.toResponse(updatedTask);
 
 
+    }
+
+    public List<TaskResponse> getTasksByUser(User user) {
+        List<Task> tasks = taskRepository.findByUser(user);
+
+        return tasks.stream()
+                .map(TaskMapper::toResponse)
+                .toList();
     }
 }

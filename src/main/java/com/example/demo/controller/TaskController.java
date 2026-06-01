@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.dto.TaskResponse;
 import com.example.demo.dto.UpdateTaskRequest;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,16 +18,22 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
+    private final UserRepository userRepository;
 
-    public TaskController(TaskService service) {
+    public TaskController(TaskService service, UserRepository userRepository) {
         this.taskService = service;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
     public ResponseEntity<List<TaskResponse>> getAllTasks() {
-        return ResponseEntity.ok(
-                taskService.getAllTasks()
-        );
+
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Default user not found"));
+
+        List<TaskResponse> tasks = taskService.getTasksByUser(user);
+
+        return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/{id}")
@@ -38,7 +46,11 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<TaskResponse> createTask( @Valid @RequestBody CreateTaskRequest request) {
-        TaskResponse response = taskService.createTask(request);
+
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Default user not found"));
+
+        TaskResponse response = taskService.createTask(request, user);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
