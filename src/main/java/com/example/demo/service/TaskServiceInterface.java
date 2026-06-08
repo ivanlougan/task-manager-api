@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface TaskServiceInterface {
 
-    TaskResponse createTask(CreateTaskRequest request, User user);
+    TaskResponse createTask(CreateTaskRequest request);
 
     List<TaskResponse> getAllTasks();
 
@@ -20,4 +20,6 @@ public interface TaskServiceInterface {
     TaskResponse completeTask(Long id);
 
     TaskResponse updateTask(Long id, UpdateTaskRequest request);
+
+
 }

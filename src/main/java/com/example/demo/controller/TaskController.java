@@ -47,14 +47,7 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<TaskResponse> createTask( @Valid @RequestBody CreateTaskRequest request) {
 
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("Default user not found"));
-
-        TaskResponse response = taskService.createTask(request, user);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(response);
+        return ResponseEntity.ok(taskService.createTask(request));
     }
 
     @DeleteMapping("/{id}")

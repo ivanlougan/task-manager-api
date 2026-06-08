@@ -7,6 +7,7 @@ import com.example.demo.exception.TaskNotFoundException;
 import com.example.demo.model.Task;
 import com.example.demo.model.User;
 import com.example.demo.repository.TaskRepository;
+import com.example.demo.security.CurrentUserService;
 import com.example.demo.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,8 @@ public class TaskServiceTest {
 
     @Mock
     private TaskRepository taskRepository;
+    @Mock
+    private CurrentUserService currentUserService;
 
     @InjectMocks
     private TaskService taskService;
@@ -31,28 +34,33 @@ public class TaskServiceTest {
 
     @Test
     void shouldCreateTask() {
-        CreateTaskRequest request = new CreateTaskRequest("Learn Python cause AI..");
+        CreateTaskRequest request =
+                new CreateTaskRequest("Learn JWT");
 
+        User user = new User(
+                "robert@example.com",
+                "encoded-password"
+        );
 
-        User user = new User();
-        user.setId(1L);
-        user.setEmail("test@test.com");
+        when(currentUserService.getCurrentUser())
+                .thenReturn(user);
 
-        Task task = new Task(
-                "Learn Python cause AI..",
+        Task savedTask = new Task(
+                "Learn JWT",
                 false
         );
 
-        task.setId(1L);
+        savedTask.setUser(user);
 
         when(taskRepository.save(any(Task.class)))
-                .thenReturn(task);
+                .thenReturn(savedTask);
 
-        TaskResponse response = taskService.createTask(request, user);
+        TaskResponse response =
+                taskService.createTask(request);
 
-        assertEquals(1L, response.id());
-        assertEquals("Learn Python cause AI..", response.title());
-        assertFalse(response.completed());
+        assertEquals("Learn JWT", savedTask.getTitle());
+        assertEquals(user, savedTask.getUser());
+        assertFalse(savedTask.isCompleted());
 
         verify(taskRepository).save(any(Task.class));
     }

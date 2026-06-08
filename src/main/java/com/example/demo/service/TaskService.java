@@ -8,6 +8,7 @@ import com.example.demo.mapper.TaskMapper;
 import com.example.demo.model.Task;
 import com.example.demo.model.User;
 import com.example.demo.repository.TaskRepository;
+import com.example.demo.security.CurrentUserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,13 +17,17 @@ import java.util.List;
 public class TaskService implements TaskServiceInterface{
 
     private final TaskRepository taskRepository;
+    private final CurrentUserService currentUserService;
 
-    public TaskService(TaskRepository repo) {
+    public TaskService(TaskRepository repo, CurrentUserService currentUserService) {
         this.taskRepository = repo;
+        this.currentUserService = currentUserService;
     }
 
     @Override
-    public TaskResponse createTask(CreateTaskRequest request, User user) {
+    public TaskResponse createTask(CreateTaskRequest request) {
+
+        User user = currentUserService.getCurrentUser();
 
         Task task = new Task(
                 request.title(),
@@ -48,7 +53,9 @@ public class TaskService implements TaskServiceInterface{
     @Override
     public TaskResponse getTaskById(Long id) {
 
-        Task task = taskRepository.findById(id)
+        User currentUser = currentUserService.getCurrentUser();
+
+        Task task = taskRepository.findByIdAndUser(id, currentUser)
                 .orElseThrow(() ->
                         new TaskNotFoundException(
                                 "Task not found with id: " + id
