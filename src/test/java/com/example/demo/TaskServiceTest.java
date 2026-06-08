@@ -68,14 +68,23 @@ public class TaskServiceTest {
     @Test
     void shouldReturnTaskById() {
 
+        User user = new User(
+                "robert@test.com",
+                "password"
+        );
+
         Task task = new Task(
                 "Tests are great, I love tests",
                 false
         );
 
         task.setId(1L);
+        task.setUser(user);
 
-        when(taskRepository.findById(1L))
+        when(currentUserService.getCurrentUser())
+                .thenReturn(user);
+
+        when(taskRepository.findByIdAndUser(1L, user))
                 .thenReturn(Optional.of(task));
 
         TaskResponse response = taskService.getTaskById(1L);
@@ -83,13 +92,21 @@ public class TaskServiceTest {
         assertEquals(1L, response.id());
         assertEquals("Tests are great, I love tests", response.title());
 
-        verify(taskRepository).findById(1L);
+        verify(taskRepository).findByIdAndUser(1L, user);
     }
 
     @Test
     void shouldThrowExceptionWhenTaskNotFound() {
 
-        when(taskRepository.findById(1L))
+        User user = new User(
+                "robert@test.com",
+                "password"
+        );
+
+        when(currentUserService.getCurrentUser())
+                .thenReturn(user);
+
+        when(taskRepository.findByIdAndUser(1L, user))
                 .thenReturn(Optional.empty());
 
         assertThrows(
@@ -97,11 +114,16 @@ public class TaskServiceTest {
                 () -> taskService.getTaskById(1L)
         );
 
-        verify(taskRepository).findById(1L);
+        verify(taskRepository).findByIdAndUser(1L, user);
     }
 
     @Test
     void shouldThrowExceptionWhenUpdatingMissingTask() {
+
+        User user = new User(
+                "robert@test.com",
+                "password"
+        );
 
         UpdateTaskRequest request =
                 new UpdateTaskRequest(
@@ -109,7 +131,10 @@ public class TaskServiceTest {
                         true
                 );
 
-        when(taskRepository.findById(1L))
+        when(currentUserService.getCurrentUser())
+                .thenReturn(user);
+
+        when(taskRepository.findByIdAndUser(1L, user))
                 .thenReturn(Optional.empty());
 
         assertThrows(
@@ -117,7 +142,7 @@ public class TaskServiceTest {
                 () -> taskService.updateTask(1L, request)
         );
 
-        verify(taskRepository).findById(1L);
+        verify(taskRepository).findByIdAndUser(1L, user);
 
         verify(taskRepository, never())
                 .save(any(Task.class));
@@ -126,6 +151,11 @@ public class TaskServiceTest {
     @Test
     void shouldDeleteTask() {
 
+        User user = new User(
+                "robert@test.com",
+                "password"
+        );
+
         Task task = new Task(
                 "Delete me",
                 false
@@ -133,7 +163,10 @@ public class TaskServiceTest {
 
         task.setId(1L);
 
-        when(taskRepository.findById(1L))
+        when(currentUserService.getCurrentUser())
+                .thenReturn(user);
+
+        when(taskRepository.findByIdAndUser(1L, user))
                 .thenReturn(Optional.of(task));
 
         taskService.deleteTaskById(1L);
@@ -143,6 +176,11 @@ public class TaskServiceTest {
 
     @Test
     void shouldUpdateTask() {
+
+        User user = new User(
+                "robert@test.com",
+                "password"
+        );
 
         Task task = new Task(
                 "Old title",
@@ -157,7 +195,10 @@ public class TaskServiceTest {
                         true
                 );
 
-        when(taskRepository.findById(1L))
+        when(currentUserService.getCurrentUser())
+                .thenReturn(user);
+
+        when(taskRepository.findByIdAndUser(1L, user))
                 .thenReturn(Optional.of(task));
 
         when(taskRepository.save(any(Task.class)))
@@ -168,5 +209,25 @@ public class TaskServiceTest {
         assertEquals("New title", response.title());
         assertTrue(response.completed());
 
+    }
+
+    @Test
+    void shouldThrowWhenTaskDoesNotBelongToCurrentUser(){
+
+        User user = new User(
+                "robert@test.com",
+                "password"
+        );
+
+        when(currentUserService.getCurrentUser())
+                .thenReturn(user);
+
+        when(taskRepository.findByIdAndUser(1L, user))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                TaskNotFoundException.class,
+                () -> taskService.getTaskById(1L)
+        );
     }
 }

@@ -67,7 +67,9 @@ public class TaskService implements TaskServiceInterface{
     @Override
     public void deleteTaskById(Long id) {
 
-        Task task = taskRepository.findById(id)
+        User currentUser = currentUserService.getCurrentUser();
+
+        Task task = taskRepository.findByIdAndUser(id, currentUser)
                 .orElseThrow(() ->
                         new TaskNotFoundException(
                                 "Task not found with id: " + id
@@ -79,7 +81,9 @@ public class TaskService implements TaskServiceInterface{
     @Override
     public TaskResponse updateTask(Long id, UpdateTaskRequest request) {
 
-        Task task = taskRepository.findById(id)
+        User currentUser = currentUserService.getCurrentUser();
+
+        Task task = taskRepository.findByIdAndUser(id, currentUser)
                 .orElseThrow(() ->
                         new TaskNotFoundException(
                                 "Task not found with id: " + id
