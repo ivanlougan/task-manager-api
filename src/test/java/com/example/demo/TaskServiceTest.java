@@ -31,16 +31,20 @@ public class TaskServiceTest {
     @InjectMocks
     private TaskService taskService;
 
+    private User createUser() {
+        return new User(
+                "test@mail.com",
+                "veryStrongPassword"
+        );
+    }
+
 
     @Test
     void shouldCreateTask() {
         CreateTaskRequest request =
                 new CreateTaskRequest("Learn JWT");
 
-        User user = new User(
-                "robert@example.com",
-                "encoded-password"
-        );
+        User user = createUser();
 
         when(currentUserService.getCurrentUser())
                 .thenReturn(user);
@@ -68,10 +72,7 @@ public class TaskServiceTest {
     @Test
     void shouldReturnTaskById() {
 
-        User user = new User(
-                "robert@test.com",
-                "password"
-        );
+        User user = createUser();
 
         Task task = new Task(
                 "Tests are great, I love tests",
@@ -98,10 +99,7 @@ public class TaskServiceTest {
     @Test
     void shouldThrowExceptionWhenTaskNotFound() {
 
-        User user = new User(
-                "robert@test.com",
-                "password"
-        );
+        User user = createUser();
 
         when(currentUserService.getCurrentUser())
                 .thenReturn(user);
@@ -120,10 +118,7 @@ public class TaskServiceTest {
     @Test
     void shouldThrowExceptionWhenUpdatingMissingTask() {
 
-        User user = new User(
-                "robert@test.com",
-                "password"
-        );
+        User user = createUser();
 
         UpdateTaskRequest request =
                 new UpdateTaskRequest(
@@ -151,10 +146,7 @@ public class TaskServiceTest {
     @Test
     void shouldDeleteTask() {
 
-        User user = new User(
-                "robert@test.com",
-                "password"
-        );
+        User user = createUser();
 
         Task task = new Task(
                 "Delete me",
@@ -177,10 +169,7 @@ public class TaskServiceTest {
     @Test
     void shouldUpdateTask() {
 
-        User user = new User(
-                "robert@test.com",
-                "password"
-        );
+        User user = createUser();
 
         Task task = new Task(
                 "Old title",
@@ -214,10 +203,7 @@ public class TaskServiceTest {
     @Test
     void shouldThrowWhenTaskDoesNotBelongToCurrentUser(){
 
-        User user = new User(
-                "robert@test.com",
-                "password"
-        );
+        User user = createUser();
 
         when(currentUserService.getCurrentUser())
                 .thenReturn(user);

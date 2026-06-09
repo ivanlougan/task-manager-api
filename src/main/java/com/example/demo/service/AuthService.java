@@ -24,10 +24,13 @@ public class AuthService {
 
     public void register(RegisterRequest request) {
 
-        User user = new User(
-                request.email(),
-                passwordEncoder.encode(request.password())
-        );
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        User user = new User();
+        user.setEmail(request.email());
+        user.setPassword(passwordEncoder.encode(request.password()));
 
         userRepository.save(user);
     }
